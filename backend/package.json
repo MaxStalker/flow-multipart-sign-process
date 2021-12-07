@@ -1,0 +1,14 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "flow-cadut": "^0.1.14"
+  },
+  "scripts": {
+    "start": "nodemon index.js"
+  }
+}
