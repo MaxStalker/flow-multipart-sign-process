@@ -1,37 +1,46 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 const port = 3001;
 const fcl = require("@onflow/fcl");
+const { signWithKey } = require("./signer");
 
-fcl.config().put("accessNode.api", `https://access-testnet.onflow.org`);
+// setup express middlewares
 app.use(cors());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+app.use(bodyParser.json());
 
-app.get("/get-proposer", async (req, res) => {
-  const rawBlock = await fcl.send([fcl.getBlock(true)]);
-  const block = await fcl.decode(rawBlock);
+// setup configs
+fcl.config().put("accessNode.api", `https://access-testnet.onflow.org`);
+require("dotenv").config();
 
-  const rawAccount = await fcl.send([fcl.getAccount("0x54356d44d4d2f53b")]);
+// setup routes
+app.get("/getAccount", async (req, res) => {
+  const { userId } = req.query;
+  const rawAccount = await fcl.send([fcl.getAccount(userId)]);
   const { keys, address } = await fcl.decode(rawAccount);
-  console.log({ keys, address });
 
   // You will need to implement some key rotation mechanism to prevent sequenceNum collision
   // We will pick first one for simplicity
-  const key = keys[0];
-  console.log(key)
+  const { index } = keys[0];
+
   res.json({
-    referenceBlock: block.height,
-    proposer: {
-      addr: address,
-      keyId: key.index,
-      sequenceNum: key.sequenceNumber,
-    },
+    addr: address,
+    keyId: index,
   });
 });
 
-app.get("/pay-and-submit", (req, res) => {
+app.post("/sign", (req, res) => {
+  const { message } = req.body;
+  console.log({ message });
+  const signature = signWithKey(process.env.PKEY, message);
   res.json({
-    message: "Hello, World!",
+    signature,
   });
 });
 

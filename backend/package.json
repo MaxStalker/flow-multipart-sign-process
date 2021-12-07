@@ -4,9 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "elliptic": "^6.5.4",
     "express": "^4.17.1",
-    "flow-cadut": "^0.1.14"
+    "flow-cadut": "^0.1.14",
+    "sha3": "^2.1.4"
   },
   "scripts": {
     "start": "nodemon index.js"
